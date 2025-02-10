@@ -167,8 +167,7 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookId")
-                        .IsUnique();
+                    b.HasIndex("BookId");
 
                     b.HasIndex("BorrowerId");
 
@@ -182,7 +181,9 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -206,6 +207,17 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("0194c896-3090-7299-a56e-31b8caabe9ef"),
+                            CreatedAt = new DateTime(2025, 2, 3, 0, 34, 33, 739, DateTimeKind.Utc).AddTicks(7140),
+                            Email = "hamza@gmail.com",
+                            Password = "AQAAAAIAAYagAAAAEDr5753O8U+quoxj18fC+cg5h0qcFKRFNvWAS+FewfiIxJo5mngACs0TOQk2R7Hfow==",
+                            Role = "Admin",
+                            UserName = "hamza"
+                        });
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.Domain.Books.Entities.Book", b =>
@@ -222,8 +234,8 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
             modelBuilder.Entity("LibraryManagementSystem.Domain.Loans.Entities.Loan", b =>
                 {
                     b.HasOne("LibraryManagementSystem.Domain.Books.Entities.Book", "Book")
-                        .WithOne("CurrentLoan")
-                        .HasForeignKey("LibraryManagementSystem.Domain.Loans.Entities.Loan", "BookId")
+                        .WithMany("Loans")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -245,7 +257,7 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("LibraryManagementSystem.Domain.Books.Entities.Book", b =>
                 {
-                    b.Navigation("CurrentLoan");
+                    b.Navigation("Loans");
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.Domain.Borrowers.Entities.Borrower", b =>

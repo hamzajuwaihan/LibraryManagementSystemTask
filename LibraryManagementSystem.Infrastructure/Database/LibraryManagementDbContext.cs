@@ -3,23 +3,48 @@ using LibraryManagementSystem.Domain.Books.Entities;
 using LibraryManagementSystem.Domain.Borrowers.Entities;
 using LibraryManagementSystem.Domain.Loans.Entities;
 using LibraryManagementSystem.Domain.Users.Entities;
+using LibraryManagementSystem.Domain.Users.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagementSystem.Infrastructure.Database;
 
-public class LibraryManagementDbContext : DbContext
+/// <summary>
+/// Represents the database context for the Library Management System.
+/// </summary>
+/// <param name="options">The options to configure the database context.</param>
+public class LibraryManagementDbContext(DbContextOptions<LibraryManagementDbContext> options) : DbContext(options)
 {
-    public DbSet<Author> Authors { get; set; } 
+    /// <summary>
+    /// Gets or sets the Authors table.
+    /// </summary>
+    public DbSet<Author> Authors { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Books table.
+    /// </summary>
     public DbSet<Book> Books { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Loans table.
+    /// </summary>
     public DbSet<Loan> Loans { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Borrowers table.
+    /// </summary>
     public DbSet<Borrower> Borrowers { get; set; }
 
-    public DbSet<User> Users { get; set; }
-    public LibraryManagementDbContext(DbContextOptions<LibraryManagementDbContext> options)
-           : base(options)
-    {
-    }
 
+    /// <summary>
+    /// Gets or sets the Users table.
+    /// </summary>
+    public DbSet<User> Users { get; set; }
+
+
+    /// <summary>
+    /// Configures the entity relationships and database constraints.
+    /// </summary>
+    /// <param name="modelBuilder">The model builder used to configure entity relationships.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -34,9 +59,9 @@ public class LibraryManagementDbContext : DbContext
                   .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.HasMany(b => b.Loans)
-                  .WithOne(l => l.Borrower)
-                  .HasForeignKey(l => l.BorrowerId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                 .WithOne(l => l.Borrower)
+                 .HasForeignKey(l => l.BorrowerId)
+                 .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Author>(entity =>
@@ -61,9 +86,9 @@ public class LibraryManagementDbContext : DbContext
             entity.Property(b => b.CreatedAt)
                   .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.HasOne(b => b.CurrentLoan)
+            entity.HasMany(b => b.Loans)
                   .WithOne(l => l.Book)
-                  .HasForeignKey<Loan>(l => l.BookId)
+                  .HasForeignKey(l => l.BookId)
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -82,7 +107,22 @@ public class LibraryManagementDbContext : DbContext
             entity.HasKey(u => u.Id);
             entity.Property(u => u.Password).IsRequired();
             entity.Property(u => u.Email).IsRequired();
+            entity.Property(u => u.CreatedAt)
+                  .HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(u => u.Role).HasConversion<string>();
+
+            entity.HasData(new User
+            {
+                Id = Guid.Parse("0194c896-3090-7299-a56e-31b8caabe9ef"),
+                UserName = "hamza",
+                Password = "AQAAAAIAAYagAAAAEDr5753O8U+quoxj18fC+cg5h0qcFKRFNvWAS+FewfiIxJo5mngACs0TOQk2R7Hfow==",
+                Email = "hamza@gmail.com",
+                Role = Role.Admin,
+                CreatedAt = DateTime.SpecifyKind(
+                    DateTime.Parse("2025-02-03 00:34:33.739714+03"),
+                    DateTimeKind.Utc
+                )
+            });
         });
     }
 }

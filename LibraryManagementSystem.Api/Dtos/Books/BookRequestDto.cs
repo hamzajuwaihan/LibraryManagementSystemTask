@@ -1,6 +1,6 @@
 ﻿namespace LibraryManagementSystem.Api.Dtos.Books;
 
-public class UpdateBookRequestDto
+public class BookRequestDto
 {
     public string? Title { get; set; }
     public string? ISBN { get; set; }

@@ -1,31 +1,38 @@
+using FluentValidation;
+using LibraryManagementSystem.Api.Extensions;
+using LibraryManagementSystem.Api.Middlewares;
 using LibraryManagementSystem.Api.Routes;
 using LibraryManagementSystem.Application;
 using LibraryManagementSystem.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration)
                 .AddApplication();
 
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGenWithJwt();
 
-var app = builder.Build();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+WebApplication app = builder.Build();
 
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapAuthorsEndpoint();
 app.MapBooksEndpoint();
 app.MapBorrowersEndpoint();
 app.MapLoansEndpoint();
+app.MapUsersEndpoint();
 
 app.Run();

@@ -1,6 +1,6 @@
 ﻿namespace LibraryManagementSystem.Api.Dtos.Borrowers;
 
-public class CreateBorrowerRequestDto
+public class BorrowerRequestDto
 {
     public required string Name { get; set; }
     public required string Email { get; set; }

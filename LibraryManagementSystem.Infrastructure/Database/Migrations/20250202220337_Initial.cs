@@ -55,7 +55,7 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
                     Password = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -119,6 +119,11 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "Password", "Role", "UpdatedAt", "UserName" },
+                values: new object[] { new Guid("0194c896-3090-7299-a56e-31b8caabe9ef"), new DateTime(2025, 2, 3, 0, 34, 33, 739, DateTimeKind.Utc).AddTicks(7140), "hamza@gmail.com", "AQAAAAIAAYagAAAAEDr5753O8U+quoxj18fC+cg5h0qcFKRFNvWAS+FewfiIxJo5mngACs0TOQk2R7Hfow==", "Admin", null, "hamza" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Books_AuthorId",
                 table: "Books",
@@ -127,8 +132,7 @@ namespace LibraryManagementSystem.Infrastructure.Database.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Loans_BookId",
                 table: "Loans",
-                column: "BookId",
-                unique: true);
+                column: "BookId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loans_BorrowerId",

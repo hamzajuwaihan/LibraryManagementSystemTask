@@ -10,9 +10,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LibraryManagementSystem.Infrastructure;
-
+/// <summary>
+/// Provides extension methods for configuring infrastructure dependencies in the application.
+/// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Adds infrastructure services to the dependency injection container.
+    /// </summary>
+    /// <returns>The updated <see cref="IServiceCollection"/> with registered infrastructure services.</returns>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         string connectionString = configuration.GetConnectionString("DefaultConnection")!;
